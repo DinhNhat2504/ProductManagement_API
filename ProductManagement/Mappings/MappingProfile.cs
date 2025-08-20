@@ -26,6 +26,24 @@ public class MappingProfile : Profile
         CreateMap<OrderDTO, OrderItem>()
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.Now))
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.Now));
+         CreateMap<OrderCreateDTO, Order>()
+            .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => DateTime.Now))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now));
+
+        CreateMap<OrderItemCreateDTO, OrderItem>()
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now));
+
+        CreateMap<Order, OrderResponseDTO>()
+            .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.OrderStatus!.Name))
+            .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.Payment!.PaymentMethod));
+
+        CreateMap<OrderItem, OrderItemResponseDTO>()
+            .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product!.Name));
+        CreateMap<UserRegisterDTO, User>()
+           .ForMember(dest => dest.HashedPassword, opt => opt.Ignore());
+        CreateMap<User, UserDTO>();
     }
 }
 
