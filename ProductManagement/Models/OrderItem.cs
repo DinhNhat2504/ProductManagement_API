@@ -14,7 +14,7 @@ public class OrderItem
 
     [Required]
     [ForeignKey("Product")]
-    public int ProductId { get; set; }
+    public int ProductId { get; set; }  
 
     [Required]
     [Range(1, int.MaxValue)]

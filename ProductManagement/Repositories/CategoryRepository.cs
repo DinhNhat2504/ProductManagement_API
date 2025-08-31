@@ -42,7 +42,7 @@ namespace ProductManagement.Repositories
 
         public async Task UpdateCategoryAsync(Category category)
         {
-            _context.Entry(category).State = EntityState.Modified;
+            _context.Categories.Update(category);
             await _context.SaveChangesAsync();
         }
     }

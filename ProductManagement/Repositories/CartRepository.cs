@@ -37,15 +37,15 @@ namespace ProductManagement.Repositories
                     CartId = cartId,
                     ProductId = productId,
                     Quantity = quantity,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
                 };
                 _context.CartItems.Add(cartItem);
             }
             else
             {
-                cartItem.Quantity = quantity;
-                cartItem.UpdatedAt = DateTime.UtcNow;
+                cartItem.Quantity  = cartItem.Quantity + quantity;
+                cartItem.UpdatedAt = DateTime.Now;
             }
             await _context.SaveChangesAsync();
             return true;
@@ -80,56 +80,13 @@ namespace ProductManagement.Repositories
                 .FirstOrDefaultAsync(c => c.CartId == cartId);
         }
 
-        public async Task<Cart> CreateGuestCartAsync()
-        {
-            var cart = new Cart
-            {
-                UserId = null, // Không liên kết với user
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
-            };
-            _context.Carts.Add(cart);
-            await _context.SaveChangesAsync();
-            return cart;
-        }
-
-        public async Task<bool> AddOrUpdateCartItemByCartIdAsync(int cartId, int productId, int quantity)
-        {
-            var cartItem = await _context.CartItems.FirstOrDefaultAsync(ci => ci.CartId == cartId && ci.ProductId == productId);
-            if (cartItem == null)
-            {
-                cartItem = new CartItem
-                {
-                    CartId = cartId,
-                    ProductId = productId,
-                    Quantity = quantity,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
-                };
-                _context.CartItems.Add(cartItem);
-            }
-            else
-            {
-                cartItem.Quantity = quantity;
-                cartItem.UpdatedAt = DateTime.Now;
-            }
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<bool> RemoveCartItemByCartIdAsync(int cartId, int productId)
+        public async Task<bool> UpdateQuantityItem(int cartId, int productId, int quantity)
         {
             var cartItem = await _context.CartItems.FirstOrDefaultAsync(ci => ci.CartId == cartId && ci.ProductId == productId);
             if (cartItem == null) return false;
-            _context.CartItems.Remove(cartItem);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<bool> ClearCartByCartIdAsync(int cartId)
-        {
-            var items = _context.CartItems.Where(ci => ci.CartId == cartId);
-            _context.CartItems.RemoveRange(items);
+            cartItem.Quantity = quantity;
+            cartItem.UpdatedAt = DateTime.Now;
+             _context.Update(cartItem);
             await _context.SaveChangesAsync();
             return true;
         }

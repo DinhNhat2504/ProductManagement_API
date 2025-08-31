@@ -67,10 +67,13 @@ namespace ProductManagement.Controllers
                 return BadRequest("Category ID mismatch or null category");
             try
             {
-                var result = await _categoryService.UpdateCategoryAsync(category);
-                if (!result)
+                var existingCategory =await _categoryService.GetCategoryByIdAsync(id);
+                if (existingCategory == null)
                     return NotFound();
-                return NoContent();
+                existingCategory.Name = category.Name;
+                existingCategory.UpdatedAt = DateTime.Now;
+                await _categoryService.UpdateCategoryAsync(existingCategory);
+                return Ok();
             }
             catch (Exception ex)
             {

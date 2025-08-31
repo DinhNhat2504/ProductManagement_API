@@ -21,6 +21,9 @@ public class ProductDTO
     [StringLength(500)]
     public string? ImageURL { get; set; }
 
+    public IFormFile? ImageFile { get; set; }
+
     [Required]
     public int CategoryId { get; set; }
+
 }

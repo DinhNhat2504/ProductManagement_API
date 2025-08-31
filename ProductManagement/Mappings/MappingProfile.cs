@@ -12,6 +12,7 @@ public class MappingProfile : Profile
         CreateMap<ProductReview, ProductReviewDTO>()
             .ForMember(dest => dest.AvatarUrl, opt => opt.MapFrom(src => src.User != null ? src.User.AvatarUrl : null));
         CreateMap<CartItem, CartItemDTO>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : null))
             .ReverseMap();
         CreateMap<Cart, CartDTO>()
            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.CartItems))
@@ -35,9 +36,10 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now))
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now));
 
-        CreateMap<Order, OrderResponseDTO>()
+        CreateMap<Order, OrderDTO>()
             .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.OrderStatus!.Name))
-            .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.Payment!.PaymentMethod));
+            .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems));
+        CreateMap<OrderItem, OrderItemDTO>();
 
         CreateMap<OrderItem, OrderItemResponseDTO>()
             .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product!.Name));

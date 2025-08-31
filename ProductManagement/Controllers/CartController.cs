@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using ProductManagement.DTOs;
 using ProductManagement.Services;
 
@@ -16,6 +17,7 @@ namespace ProductManagement.Controllers
         }
 
         // Lấy giỏ hàng của khách hàng
+        [Authorize]
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetCart(int userId)
         {
@@ -24,6 +26,7 @@ namespace ProductManagement.Controllers
         }
 
         // Lấy danh sách sản phẩm trong giỏ hàng
+        [Authorize]
         [HttpGet("{userId}/items")]
         public async Task<IActionResult> GetCartItems(int userId)
         {
@@ -34,6 +37,7 @@ namespace ProductManagement.Controllers
         }
 
         // Thêm hoặc cập nhật sản phẩm vào giỏ hàng
+        [Authorize]
         [HttpPost("{userId}/items")]
         public async Task<IActionResult> AddOrUpdateCartItem(int userId, [FromBody] CartItemDTO dto)
         {
@@ -41,8 +45,17 @@ namespace ProductManagement.Controllers
             if (!result) return BadRequest();
             return Ok();
         }
+        [Authorize]
+        [HttpPut("{userId}/items")]
+        public async Task<IActionResult> UpdateQuantityItem(int userId, [FromBody] CartItemDTO dto)
+        {
+            var result = await _cartService.UpdateQuantityCart(userId, dto);
+            if (!result) return BadRequest();
+            return Ok();
+        }
 
         // Xóa sản phẩm khỏi giỏ hàng
+        [Authorize]
         [HttpDelete("{userId}/items/{productId}")]
         public async Task<IActionResult> RemoveCartItem(int userId, int productId)
         {
@@ -52,6 +65,7 @@ namespace ProductManagement.Controllers
         }
 
         // Xóa toàn bộ giỏ hàng
+        [Authorize]
         [HttpDelete("{userId}/clear")]
         public async Task<IActionResult> ClearCart(int userId)
         {
@@ -60,6 +74,7 @@ namespace ProductManagement.Controllers
             return NoContent();
         }
         // Lấy giỏ hàng theo ID
+        [Authorize]
         [HttpGet("cart/{cartId}")]
         public async Task<IActionResult> GetCartById(int cartId)
         {
@@ -67,37 +82,6 @@ namespace ProductManagement.Controllers
             if (cart == null) return NotFound();
             return Ok(cart);
         }
-        // Thêm hoặc cập nhật sản phẩm vào giỏ hàng theo ID giỏ hàng
-        [HttpPost("cart/{cartId}/items")]
-        public async Task<IActionResult> AddOrUpdateCartItemByCartId(int cartId, [FromBody] CartItemDTO dto)
-        {
-            var result = await _cartService.AddOrUpdateCartItemByCartIdAsync(cartId, dto);
-            if (!result) return BadRequest();
-            return Ok();
-        }
-        // Xóa sản phẩm khỏi giỏ hàng theo ID giỏ hàng
-        [HttpDelete("cart/{cartId}/items/{productId}")]
-        public async Task<IActionResult> RemoveCartItemByCartId(int cartId, int productId)
-        {
-            var result = await _cartService.RemoveCartItemByCartIdAsync(cartId, productId);
-            if (!result) return NotFound();
-            return NoContent();
-        }
-        // Xóa toàn bộ giỏ hàng theo ID giỏ hàng
-        [HttpDelete("cart/{cartId}/clear")]
-        public async Task<IActionResult> ClearCartByCartId(int cartId)
-        {
-            var result = await _cartService.ClearCartByCartIdAsync(cartId);
-            if (!result) return NotFound();
-            return NoContent();
-        }
-        // Tạo giỏ hàng cho khách
-        [HttpPost("guest")]
-        public async Task<IActionResult> CreateGuestCart()
-        {
-            var cart = await _cartService.CreateGuestCartAsync();
-            if (cart == null) return BadRequest("Unable to create guest cart.");
-            return CreatedAtAction(nameof(GetCartById), new { cartId = cart.CartId }, cart);
-        }
+        
     }
 }

@@ -12,7 +12,7 @@
         public string? ShippingProvince { get; set; }
         public string? ShippingDistrict { get; set; }
         public string? ShippingWard { get; set; }
-        public string PaymentMethod { get; set; } 
+        public int PaymentId { get; set; } 
         public List<OrderItemCreateDTO> OrderItems { get; set; } = new();
     }
 }

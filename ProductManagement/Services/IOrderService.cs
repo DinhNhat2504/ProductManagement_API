@@ -4,12 +4,12 @@ namespace ProductManagement.Services
 {
     public interface IOrderService
     {
-        Task<List<OrderResponseDTO>> GetAllOrdersAsync();
-        Task<OrderResponseDTO?> GetOrderByIdAsync(int orderId);
-        Task<List<OrderResponseDTO>> GetOrdersByUserIdAsync(int userId);
-        Task<OrderResponseDTO> CreateOrderAsync(OrderCreateDTO orderDto);
-        Task<OrderResponseDTO?> UpdateOrderStatusAsync(int orderId, OrderUpdateDTO updateDto);
+        Task<List<OrderDTO>> GetAllOrdersAsync();
+        Task<OrderDTO?> GetOrderByIdAsync(int orderId);
+        Task<List<OrderDTO>> GetOrdersByUserIdAsync(int userId);
+        Task<OrderDTO> CreateOrderAsync(OrderCreateDTO orderDto);
+        Task<OrderDTO?> UpdateOrderStatusAsync(int orderId, OrderUpdateDTO updateDto);
         Task<bool> DeleteOrderAsync(int orderId);
-        Task<OrderResponseDTO> CreateOrderFromCartAsync(int userId, OrderCreateDTO orderDto);
+        Task<OrderDTO> CreateOrderFromCartAsync(int userId, OrderCreateDTO orderDto);
     }
 }

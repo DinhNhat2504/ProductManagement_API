@@ -8,7 +8,6 @@ public class Order
     [Key]
     public int OrderId { get; set; }
 
-    
     [ForeignKey("User")]
     public int? UserId { get; set; }
     [StringLength(100)]
@@ -32,7 +31,7 @@ public class Order
 
     [Required]
     [ForeignKey("OrderStatus")]
-    public int OrderStatusId { get; set; }
+    public int OrderStatusId { get; set; }  
 
     [Required]
     [ForeignKey("Payment")]

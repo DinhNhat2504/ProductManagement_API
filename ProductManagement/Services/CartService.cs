@@ -58,23 +58,13 @@ namespace ProductManagement.Services
             var cart = await _cartRepository.GetCartByIdAsync(cartId);
             return _mapper.Map<CartDTO>(cart);
         }
-        public async Task<bool> AddOrUpdateCartItemByCartIdAsync(int cartId, CartItemDTO dto)
+
+        public async Task<bool> UpdateQuantityCart(int userId, CartItemDTO dto)
         {
+            var cart = await _cartRepository.GetCartByUserIdAsync(userId);
+            if (cart == null) return false;
             var cartItem = _mapper.Map<CartItem>(dto);
-            return await _cartRepository.AddOrUpdateCartItemByCartIdAsync(cartId, cartItem.ProductId, cartItem.Quantity);
-        }
-        public async Task<bool> RemoveCartItemByCartIdAsync(int cartId, int productId)
-        {
-            return await _cartRepository.RemoveCartItemByCartIdAsync(cartId, productId);
-        }
-        public async Task<bool> ClearCartByCartIdAsync(int cartId)
-        {
-            return await _cartRepository.ClearCartByCartIdAsync(cartId);
-        }
-        public async Task<CartDTO> CreateGuestCartAsync()
-        {
-            var cart = await _cartRepository.CreateGuestCartAsync();
-            return _mapper.Map<CartDTO>(cart);
+            return await _cartRepository.UpdateQuantityItem(cart.CartId, cartItem.ProductId, cartItem.Quantity);
         }
     }
 }

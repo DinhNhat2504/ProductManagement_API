@@ -9,16 +9,13 @@ public class Payment
     public int PaymentId { get; set; }
 
     [Required]
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal Amount { get; set; }
-
-    [Required]
     [StringLength(50)]
-    public string? PaymentMethod { get; set; } 
+    public string? PaymentMethod { get; set; } = "COD";
 
-    public DateTime PaymentDate { get; set; }
+    [StringLength(200)]
+    public string? Description { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    public ICollection<Order> Orders { get; set; } = new List<Order>();
+    //public ICollection<Order> Orders { get; set; } = new List<Order>();
 }

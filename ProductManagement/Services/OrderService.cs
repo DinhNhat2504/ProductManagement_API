@@ -10,60 +10,61 @@ namespace ProductManagement.Services
         private readonly IOrderRepository _orderRepository;
         private readonly ICartService _cartService;
         private readonly IMapper _mapper;
+        private readonly IProductRepository _productRepository;
 
-        public OrderService(IOrderRepository orderRepository, ICartService cartService, IMapper mapper)
+
+        public OrderService(IOrderRepository orderRepository, ICartService cartService, IMapper mapper, IProductRepository productRepository)
         {
             _orderRepository = orderRepository;
             _cartService = cartService;
             _mapper = mapper;
+            _productRepository = productRepository;
         }
 
-        public async Task<List<OrderResponseDTO>> GetAllOrdersAsync()
+        public async Task<List<OrderDTO>> GetAllOrdersAsync()
         {
             var orders = await _orderRepository.GetAllOrdersAsync();
-            return _mapper.Map<List<OrderResponseDTO>>(orders);
+            return _mapper.Map<List<OrderDTO>>(orders);
         }
 
-        public async Task<OrderResponseDTO?> GetOrderByIdAsync(int orderId)
+        public async Task<OrderDTO?> GetOrderByIdAsync(int orderId)
         {
             var order = await _orderRepository.GetOrderByIdAsync(orderId);
-            return order == null ? null : _mapper.Map<OrderResponseDTO>(order);
+            return order == null ? null : _mapper.Map<OrderDTO>(order);
         }
 
-        public async Task<List<OrderResponseDTO>> GetOrdersByUserIdAsync(int userId)
+        public async Task<List<OrderDTO>> GetOrdersByUserIdAsync(int userId)
         {
             var orders = await _orderRepository.GetOrdersByUserIdAsync(userId);
-            return _mapper.Map<List<OrderResponseDTO>>(orders);
+            return _mapper.Map<List<OrderDTO>>(orders);
         }
 
-        public async Task<OrderResponseDTO> CreateOrderAsync(OrderCreateDTO orderDto)
+        public async Task<OrderDTO> CreateOrderAsync(OrderCreateDTO orderDto)
         {
             var order = _mapper.Map<Order>(orderDto);
 
-            // Tính tổng tiền đơn hàng
             decimal total = 0;
             foreach (var item in order.OrderItems)
             {
-                // Lấy giá sản phẩm từ DB hoặc truyền từ DTO (tùy nghiệp vụ)
-                // Giả sử có thuộc tính Price trong OrderItem
-                total += item.Price * item.Quantity;
+                // Lấy giá sản phẩm từ DB
+                var product = await _productRepository.GetProductByIdAsync(item.ProductId);
+                if (product != null)
+                {
+                    item.Price = product.Price;
+                    total += item.Price * item.Quantity;
+                }
+                else
+                {
+                    item.Price = 0;
+                }
             }
             order.TotalPrice = total;
-            // Tạo Payment mới
-            var payment = new Payment
-            {
-                Amount = total,
-                PaymentMethod = orderDto.PaymentMethod,
-                PaymentDate = DateTime.Now,
-            };
-            await _orderRepository.CreatePaymentAsync(payment);
-            order.PaymentId = payment.PaymentId;
 
             var createdOrder = await _orderRepository.CreateOrderAsync(order);
-            return _mapper.Map<OrderResponseDTO>(createdOrder);
+            return _mapper.Map<OrderDTO>(createdOrder);
         }
 
-        public async Task<OrderResponseDTO?> UpdateOrderStatusAsync(int orderId, OrderUpdateDTO updateDto)
+        public async Task<OrderDTO?> UpdateOrderStatusAsync(int orderId, OrderUpdateDTO updateDto)
         {
             var order = await _orderRepository.GetOrderByIdAsync(orderId);
             if (order == null)
@@ -71,14 +72,14 @@ namespace ProductManagement.Services
 
             order.OrderStatusId = updateDto.OrderStatusId;
             var updatedOrder = await _orderRepository.UpdateOrderAsync(order);
-            return _mapper.Map<OrderResponseDTO>(updatedOrder);
+            return _mapper.Map<OrderDTO>(updatedOrder);
         }
 
         public async Task<bool> DeleteOrderAsync(int orderId)
         {
             return await _orderRepository.DeleteOrderAsync(orderId);
         }
-        public async Task<OrderResponseDTO> CreateOrderFromCartAsync(int userId, OrderCreateDTO orderDto)
+        public async Task<OrderDTO> CreateOrderFromCartAsync(int userId, OrderCreateDTO orderDto)
         {
             // Lấy giỏ hàng của user
             var cart = await _cartService.GetCartByIdAsync(userId);
@@ -111,25 +112,13 @@ namespace ProductManagement.Services
                 }
                 order.TotalPrice = total;
 
-                // Tạo Payment mới
-                var payment = new Payment
-                {
-                    Amount = order.TotalPrice,
-                    PaymentMethod = orderDto.PaymentMethod,
-                    PaymentDate = DateTime.Now,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
-                };
-                await _orderRepository.CreatePaymentAsync(payment);
-                order.PaymentId = payment.PaymentId;
-
                 // Lưu order
                 var createdOrder = await _orderRepository.CreateOrderAsync(order);
 
                 // Xóa giỏ hàng sau khi tạo order thành công
                 await _cartService.ClearCartAsync(userId);
 
-                return _mapper.Map<OrderResponseDTO>(createdOrder);
+                return _mapper.Map<OrderDTO>(createdOrder);
             }
             else
             {

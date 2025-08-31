@@ -10,6 +10,6 @@ namespace ProductManagement.Repositories
         Task<Order> CreateOrderAsync(Order order);
         Task<Order> UpdateOrderAsync(Order order);
         Task<bool> DeleteOrderAsync(int orderId);
-        Task<Payment> CreatePaymentAsync(Payment payment);
+        
     }
 }

@@ -24,7 +24,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("MyAllowOrigins", policy =>
     {
         policy
-          .WithOrigins("http://127.0.0.1:5500", "http://localhost:5500")
+          .WithOrigins("http://localhost:5173")
           .AllowAnyHeader()
           .AllowAnyMethod();
         
@@ -41,6 +41,8 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ProductManagement")));
 
@@ -80,7 +82,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseStaticFiles();
 //Đặt trên UseAuthorization
 app.UseCors("MyAllowOrigins");
 app.UseAuthentication();

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductManagement.DTOs;
 using ProductManagement.Services;
@@ -15,7 +16,7 @@ namespace ProductManagement.Controllers
             _productService = productService;
         }
 
-        // Lấy tất cả sản phẩm
+        // Lấy tất cả sản phẩm  
         [HttpGet]
         public async Task<IActionResult> GetProductsAsync()
         {
@@ -34,6 +35,7 @@ namespace ProductManagement.Controllers
         }
 
         // Thêm sản phẩm mới
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddNewProduct(ProductDTO dto)
         {

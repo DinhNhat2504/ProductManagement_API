@@ -4,6 +4,7 @@ namespace ProductManagement.DTOs
 {
     public class OrderDTO
     {
+        public int OrderId { get; set; }
         public int? UserId { get; set; }
 
         [Required(ErrorMessage = "Tên khách hàng không được để trống")]
@@ -46,9 +47,10 @@ namespace ProductManagement.DTOs
         [Required]
         [StringLength(100)]
         public string ShippingWard { get; set; }
+        public string OrderStatus { get; set; } = null!;
 
         [Required]
         [MinLength(1, ErrorMessage = "Đơn hàng phải có ít nhất 1 sản phẩm")]
-        public List<OrderDTO> OrderItems { get; set; }
+        public List<OrderItemDTO> OrderItems { get; set; }
     }
 }

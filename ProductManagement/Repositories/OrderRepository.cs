@@ -56,7 +56,7 @@ namespace ProductManagement.Repositories
         public async Task<Order> UpdateOrderAsync(Order order)
         {
             order.UpdatedAt = DateTime.Now;
-            _context.Entry(order).State = EntityState.Modified;
+            _context.Orders.Update(order);
             await _context.SaveChangesAsync();
             return order;
         }
@@ -72,14 +72,5 @@ namespace ProductManagement.Repositories
             return true;
         }
 
-        public async Task<Payment> CreatePaymentAsync(Payment payment)
-        {
-            payment.CreatedAt = DateTime.Now;
-            payment.UpdatedAt = DateTime.Now;
-            _context.Payments.Add(payment);
-            await _context.SaveChangesAsync();
-            return payment;
-
-        }
     }
 }

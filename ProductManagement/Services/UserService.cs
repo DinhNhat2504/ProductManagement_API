@@ -51,7 +51,7 @@ namespace ProductManagement.Services
             user.HashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
             user.CreatedAt = DateTime.UtcNow;
             user.UpdatedAt = DateTime.UtcNow;
-            
+            //user.RoleId = 2; 
 
             await _userRepository.AddAsync(user);
             await _userRepository.SaveChangesAsync();
