@@ -75,7 +75,7 @@ namespace ProductManagement.Repositories
 
         public async Task<Cart?> GetCartByIdAsync(int cartId)
         {
-            return await _context.Carts
+            return await _context.Carts 
                 .Include(c => c.CartItems)
                 .FirstOrDefaultAsync(c => c.CartId == cartId);
         }

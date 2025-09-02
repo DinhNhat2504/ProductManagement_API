@@ -14,7 +14,7 @@ public class ProductReview
 
     [Required]
     [ForeignKey("User")]
-    public int UserId { get; set; }
+    public int? UserId { get; set; }
 
     [Required]
     [Range(1, 5)]

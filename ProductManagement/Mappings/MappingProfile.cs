@@ -11,6 +11,7 @@ public class MappingProfile : Profile
         CreateMap<ProductDTO, Product>().ReverseMap();
         CreateMap<ProductReview, ProductReviewDTO>()
             .ForMember(dest => dest.AvatarUrl, opt => opt.MapFrom(src => src.User != null ? src.User.AvatarUrl : null));
+        CreateMap<ProductReviewDTO, ProductReview>();
         CreateMap<CartItem, CartItemDTO>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : null))
             .ReverseMap();

@@ -68,5 +68,16 @@ namespace ProductManagement.Controllers
             var users = await _userService.GetAllUsersAsync();
             return Ok(users);
         }
+        [HttpPost("validate-token")]
+        public IActionResult ValidateToken([FromBody] string token)
+        {
+            var principal = _jwtService.ValidateToken(token);
+            if (principal == null)
+                return Unauthorized("Token không hợp lệ hoặc đã hết hạn");
+
+            // Có thể trả về thông tin user từ claim
+            var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return Ok(new { userId });
+        }
     }
 }
