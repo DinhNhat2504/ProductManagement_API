@@ -16,6 +16,23 @@ namespace ProductManagement.Services
             _mapper = mapper;
         }
 
+        public async Task<UserDTO> AddProductAsync(UserDTO dto)
+        {
+            var user = _mapper.Map<User>(dto);
+            user.CreatedAt = DateTime.Now;
+            user.UpdatedAt = DateTime.Now;
+            await _userRepository.AddAsync(user);
+            return _mapper.Map<UserDTO>(user);
+        }
+
+        public async Task<bool> DeleteUserAsync(int userId)
+        {
+            var existingUser = await _userRepository.GetByIdAsync(userId);
+            if (existingUser == null) return false;
+            await _userRepository.DeleteAsync(existingUser);
+            return true;
+        }
+
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
             var users = await _userRepository.GetAllUserAsync();
@@ -31,6 +48,26 @@ namespace ProductManagement.Services
         public async Task<User?> GetEntityByEmailAsync(string email)
         {
             return await _userRepository.GetByEmailAsync(email);
+        }
+
+        public async Task<PagedResult<UserDTO>> GetPagedUserAsync(int pageNumber, int pageSize, string? searchTerm)
+        {
+            var allProducts = string.IsNullOrWhiteSpace(searchTerm)
+                 ? await _userRepository.GetAllUserAsync()
+                 : await _userRepository.SearchUserAsync(searchTerm);
+            var totalItems = allProducts.Count();
+            var items = allProducts
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => _mapper.Map<UserDTO>(p))
+                .ToList();
+            return new PagedResult<UserDTO>
+            {
+                Items = items,
+                TotalCount = totalItems,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<UserDTO?> LoginAsync(UserLoginDTO dto)
@@ -59,5 +96,14 @@ namespace ProductManagement.Services
             return _mapper.Map<UserDTO>(user);
         }
 
+        public async Task<bool> UpdateUserAsync(int userId, UserDTO dto)
+        {
+            var existingUser = await _userRepository.GetByIdAsync(userId);
+            if (existingUser == null) return false;
+            _mapper.Map(dto, existingUser);
+            existingUser.UpdatedAt = DateTime.Now;
+            await _userRepository.UpdateAsync(existingUser);
+            return true;
+        }
     }
 }

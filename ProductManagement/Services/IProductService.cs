@@ -14,5 +14,7 @@ namespace ProductManagement.Services
         Task<IEnumerable<ProductDTO>> GetFeaturedProductsAsync();
         Task<IEnumerable<ProductReviewDTO>> GetProductReviewsAsync(int productId);
         Task<IEnumerable<ProductDTO>> GetRelatedProductsAsync(int productId);
+        Task<PagedResult<ProductDTO>> GetPagedProductsAsync(int pageNumber, int pageSize, string? searchTerm);
+        Task<bool> UpdateProductImageAsync(int productId, string imageUrl);
     }
 }

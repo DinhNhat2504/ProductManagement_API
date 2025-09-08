@@ -126,5 +126,35 @@ namespace ProductManagement.Services
                 return await CreateOrderAsync(orderDto);
             }
         }
+
+        public async Task<PagedResult<OrderDTO>> GetPagedOrderAsync(int pageNumber, int pageSize, string? searchTerm, int statusId, int paymentId)
+        {
+            var allOrders = string.IsNullOrEmpty(searchTerm)
+                ? await _orderRepository.GetAllOrdersAsync()
+                : await _orderRepository.SearchOrdersAsync(searchTerm);
+
+            // Lọc theo statusId nếu được truyền vào
+            if (statusId > 0)
+                allOrders = allOrders.Where(o => o.OrderStatusId == statusId).ToList();
+
+            // Lọc theo paymentId nếu được truyền vào
+            if (paymentId > 0)
+                allOrders = allOrders.Where(o => o.PaymentId == paymentId).ToList();
+
+            var totalItems = allOrders.Count();
+            var items = allOrders
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => _mapper.Map<OrderDTO>(p))
+                .ToList();
+
+            return new PagedResult<OrderDTO>
+            {
+                Items = items,
+                TotalCount = totalItems,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+            };
+        }
     }
 }

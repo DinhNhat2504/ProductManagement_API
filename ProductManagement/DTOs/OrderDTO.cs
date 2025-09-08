@@ -47,7 +47,9 @@ namespace ProductManagement.DTOs
         [Required]
         [StringLength(100)]
         public string ShippingWard { get; set; }
+
         public string OrderStatus { get; set; } = null!;
+        public string? PaymentName { get; set; }
 
         [Required]
         [MinLength(1, ErrorMessage = "Đơn hàng phải có ít nhất 1 sản phẩm")]

@@ -34,28 +34,91 @@ namespace ProductManagement.Controllers
             return Ok(product);
         }
 
-        // Thêm sản phẩm mới
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> AddNewProduct(ProductDTO dto)
+        public async Task<IActionResult> AddNewProduct([FromForm] ProductDTO dto)
         {
+            if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+            {
+                var fileName = Guid.NewGuid() + Path.GetExtension(dto.ImageFile.FileName);
+                var filePath = Path.Combine("wwwroot/images/products", fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await dto.ImageFile.CopyToAsync(stream);
+                }
+
+                dto.ImageURL = "/images/products/" + fileName;
+            }
+
             var product = await _productService.AddProductAsync(dto);
             return CreatedAtAction(nameof(GetProductById), new { id = product.ProductId }, product);
         }
 
         // Sửa sản phẩm
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProduct(int id, ProductDTO dto)
+        public async Task<IActionResult> UpdateProduct(int id, [FromForm] ProductDTO dto)
         {
             if (id != dto.ProductId)
                 return BadRequest("Product ID mismatch");
+
+            // Lấy thông tin sản phẩm cũ
+            var oldProduct = await _productService.GetProductByIdAsync(id);
+
+            // Nếu có file ảnh mới
+            if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+            {
+                // Xóa ảnh cũ nếu tồn tại
+                if (!string.IsNullOrEmpty(oldProduct?.ImageURL))
+                {
+                    var oldImagePath = Path.Combine("wwwroot", oldProduct.ImageURL.TrimStart('/'));
+                    if (System.IO.File.Exists(oldImagePath))
+                        System.IO.File.Delete(oldImagePath);
+                }
+
+                // Lưu ảnh mới
+                var fileName = Guid.NewGuid() + Path.GetExtension(dto.ImageFile.FileName);
+                var filePath = Path.Combine("wwwroot/images/products", fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await dto.ImageFile.CopyToAsync(stream);
+                }
+
+                dto.ImageURL = "/images/products/" + fileName;
+            }
+            else
+            {
+                // Nếu không upload ảnh mới, giữ nguyên ảnh cũ
+                dto.ImageURL = oldProduct?.ImageURL;
+            }
 
             var result = await _productService.UpdateProductAsync(id, dto);
             if (!result)
                 return NotFound();
             return Ok();
         }
+        // Upload ảnh sản phẩm
+        [HttpPost("upload-image")]
+        public async Task<IActionResult> UploadProductImage([FromForm] ProductImageUploadDTO dto)
+        {
+            if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+            {
+                var fileName = Guid.NewGuid() + Path.GetExtension(dto.ImageFile.FileName);
+                var filePath = Path.Combine("wwwroot/images/products", fileName);
 
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await dto.ImageFile.CopyToAsync(stream);
+                }
+
+                // Cập nhật đường dẫn ảnh cho sản phẩm
+                await _productService.UpdateProductImageAsync(dto.ProductId, "/images/products/" + fileName);
+            }
+
+            return Ok(new { message = "Upload thành công!" });
+        }
         // Xóa sản phẩm
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
@@ -111,6 +174,15 @@ namespace ProductManagement.Controllers
         public async Task<IActionResult> GetRelatedProducts(int id)
         {
             var products = await _productService.GetRelatedProductsAsync(id);
+            return Ok(products);
+        }
+        [HttpGet("paged")]
+        public async Task<IActionResult> GetPagedProducts(
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10,
+    [FromQuery] string? searchTerm = null)
+        {
+            var products = await _productService.GetPagedProductsAsync(pageNumber, pageSize, searchTerm);
             return Ok(products);
         }
     }

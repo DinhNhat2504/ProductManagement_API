@@ -72,5 +72,18 @@ namespace ProductManagement.Repositories
             return true;
         }
 
+        public async Task<List<Order>> SearchOrdersAsync(string searchTerm)
+        {
+            return await _context.Orders
+                .Include(o => o.OrderStatus)
+                .Include(o => o.Payment)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .Where(o => o.CustomerName!.Contains(searchTerm) ||
+                            o.OrderStatus!.Name.Contains(searchTerm) ||
+                            o.Payment!.PaymentMethod!.Contains(searchTerm))
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+        }
     }
 }

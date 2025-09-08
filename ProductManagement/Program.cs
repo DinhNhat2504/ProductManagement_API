@@ -24,7 +24,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("MyAllowOrigins", policy =>
     {
         policy
-          .WithOrigins("http://localhost:5173")
+          .WithOrigins("http://localhost:5173", "http://localhost:5173/admin")
           .AllowAnyHeader()
           .AllowAnyMethod();
         
@@ -45,6 +45,8 @@ builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IProductReviewRepository, ProductReviewRepository>();
 builder.Services.AddScoped<IProductReviewService, ProductReviewService>();
+builder.Services.AddScoped<IOrderStatusRepository, OrderStatusRepository>();
+builder.Services.AddScoped<IOrderStatusService, OrderStatusService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ProductManagement")));
 

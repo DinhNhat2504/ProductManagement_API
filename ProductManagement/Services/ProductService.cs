@@ -47,7 +47,15 @@ namespace ProductManagement.Services
             await _productRepository.UpdateProductAsync(existingProduct);
             return true;
         }
+        public async Task<bool> UpdateProductImageAsync(int productId, string imageUrl)
+        {
+            var product = await _productRepository.GetProductByIdAsync(productId);
+            if (product == null) return false;
 
+            product.ImageURL = imageUrl;
+            await _productRepository.UpdateProductAsync(product);
+            return true;
+        }
         public async Task<bool> DeleteProductAsync(int productId)
         {
             var product = await _productRepository.GetProductByIdAsync(productId);
@@ -86,5 +94,26 @@ namespace ProductManagement.Services
             var products = await _productRepository.GetRelatedProductsAsync(productId);
             return products.Select(p => _mapper.Map<ProductDTO>(p));
         }
+        
+        public async Task<PagedResult<ProductDTO>> GetPagedProductsAsync(int pageNumber, int pageSize, string? searchTerm)
+        {
+            var allProducts = string.IsNullOrWhiteSpace(searchTerm)
+                ? await _productRepository.GetAllProductsAsync()
+                : await _productRepository.SearchProductsAsync(searchTerm);
+            var totalItems = allProducts.Count();
+            var items = allProducts
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => _mapper.Map<ProductDTO>(p))
+                .ToList();
+            return new PagedResult<ProductDTO>
+            {
+                Items = items,
+                TotalCount = totalItems,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
+
     }
 }

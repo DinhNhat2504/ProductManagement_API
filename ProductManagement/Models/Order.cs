@@ -29,7 +29,7 @@ public class Order
     [Column(TypeName = "decimal(18,2)")]
     public decimal TotalPrice { get; set; }
 
-    [Required]
+    [Required] 
     [ForeignKey("OrderStatus")]
     public int OrderStatusId { get; set; }  
 

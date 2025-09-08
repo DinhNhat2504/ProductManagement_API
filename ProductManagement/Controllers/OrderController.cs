@@ -17,7 +17,7 @@ namespace ProductManagement.Controllers
         }
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
-        {
+        { 
             var orders = await _orderService.GetAllOrdersAsync();
             return Ok(orders);
         }
@@ -61,18 +61,24 @@ namespace ProductManagement.Controllers
                 return NotFound();
             return NoContent();
         }
-        [HttpPost("fromCart")]
-        public async Task<IActionResult> CreateOrderFromCart([FromBody] OrderCreateDTO orderDto , int UserId)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        //[HttpPost("fromCart")]
+        //public async Task<IActionResult> CreateOrderFromCart([FromBody] OrderCreateDTO orderDto , int UserId)
+        //{
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(ModelState);
 
-            var createdOrder = await _orderService.CreateOrderFromCartAsync(UserId, orderDto);
-            return CreatedAtAction(
-                nameof(GetOrderById),
-                new { orderId = createdOrder.OrderId },
-                createdOrder
-            );
+        //    var createdOrder = await _orderService.CreateOrderFromCartAsync(UserId, orderDto);
+        //    return CreatedAtAction(
+        //        nameof(GetOrderById),
+        //        new { orderId = createdOrder.OrderId },
+        //        createdOrder
+        //    );
+        //}
+        [HttpGet("paged")]
+        public async Task<IActionResult> GetAllOrders([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20, [FromQuery] string? searchTerm = null, int statusId = 0, int paymentId = 0)
+        {
+            var orders = await _orderService.GetPagedOrderAsync(pageNumber, pageSize, searchTerm , statusId, paymentId);
+            return Ok(orders);
         }
     }
 }

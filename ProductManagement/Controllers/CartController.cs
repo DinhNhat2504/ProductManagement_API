@@ -17,7 +17,7 @@ namespace ProductManagement.Controllers
         }
 
         // Lấy giỏ hàng của khách hàng
-        [Authorize]
+        
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetCart(int userId)
         {

@@ -8,7 +8,9 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<ProductDTO, Product>().ReverseMap();
+        CreateMap<ProductDTO, Product>()
+            .ReverseMap();
+        CreateMap<Product, ProductDTO>().ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : null));
         CreateMap<ProductReview, ProductReviewDTO>()
             .ForMember(dest => dest.AvatarUrl, opt => opt.MapFrom(src => src.User != null ? src.User.AvatarUrl : null));
         CreateMap<ProductReviewDTO, ProductReview>();
@@ -39,6 +41,7 @@ public class MappingProfile : Profile
 
         CreateMap<Order, OrderDTO>()
             .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.OrderStatus!.Name))
+            .ForMember(dest => dest.PaymentName, opt => opt.MapFrom(src => src.Payment!.PaymentMethod))
             .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems));
         CreateMap<OrderItem, OrderItemDTO>();
 
@@ -46,7 +49,9 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product!.Name));
         CreateMap<UserRegisterDTO, User>()
            .ForMember(dest => dest.HashedPassword, opt => opt.Ignore());
-        CreateMap<User, UserDTO>();
+        CreateMap<User, UserDTO>()
+            .ForMember(dest => dest.RoleName , opt => opt.MapFrom(src => src.Role != null? src.Role.Name : null))
+            .ReverseMap();
     }
 }
 
