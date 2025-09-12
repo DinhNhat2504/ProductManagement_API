@@ -1,4 +1,5 @@
 ﻿using ProductManagement.Models;
+using ProductManagement.Services;
 
 namespace ProductManagement.Repositories
 {
@@ -11,7 +12,8 @@ namespace ProductManagement.Repositories
         Task AddProductAsync(Product product);
         Task UpdateProductAsync(Product product);
         Task DeleteProductAsync(int productId);
-        Task<IEnumerable<Product>> FilterProductsAsync(int? categoryId, decimal? minPrice, decimal? maxPrice, string? sortBy);
+        Task<PagedResult<Product>> FilterProductsAsync(int? categoryId, decimal? minPrice, decimal? maxPrice, string? sortBy, int pageNumber,
+    int pageSize);
         Task<IEnumerable<Product>> GetFeaturedProductsAsync();
         Task<IEnumerable<ProductReview>> GetProductReviewsAsync(int productId);
         Task<IEnumerable<Product>> GetRelatedProductsAsync(int productId);

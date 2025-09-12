@@ -52,6 +52,7 @@ public class MappingProfile : Profile
         CreateMap<User, UserDTO>()
             .ForMember(dest => dest.RoleName , opt => opt.MapFrom(src => src.Role != null? src.Role.Name : null))
             .ReverseMap();
+        CreateMap<StockTransactionDTO, StockTransaction>().ReverseMap();
     }
 }
 

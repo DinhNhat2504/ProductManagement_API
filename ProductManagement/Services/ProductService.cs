@@ -71,10 +71,22 @@ namespace ProductManagement.Services
             return products.Select(p => _mapper.Map<ProductDTO>(p));
         }
 
-        public async Task<IEnumerable<ProductDTO>> FilterProductsAsync(int? categoryId, decimal? minPrice, decimal? maxPrice, string? sortBy)
+        public async Task<PagedResult<ProductDTO>> FilterProductsAsync(
+     int? categoryId,
+     decimal? minPrice,
+     decimal? maxPrice,
+     string? sortBy,
+     int pageNumber = 1,
+     int pageSize = 10)
         {
-            var products = await _productRepository.FilterProductsAsync(categoryId, minPrice, maxPrice, sortBy);
-            return products.Select(p => _mapper.Map<ProductDTO>(p));
+            var pagedProducts = await _productRepository.FilterProductsAsync(categoryId, minPrice, maxPrice, sortBy, pageNumber, pageSize);
+            return new PagedResult<ProductDTO>
+            {
+                Items = pagedProducts.Items.Select(p => _mapper.Map<ProductDTO>(p)),
+                TotalCount = pagedProducts.TotalCount,
+                PageNumber = pagedProducts.PageNumber,
+                PageSize = pagedProducts.PageSize
+            };
         }
 
         public async Task<IEnumerable<ProductDTO>> GetFeaturedProductsAsync()

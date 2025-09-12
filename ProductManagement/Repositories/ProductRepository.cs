@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProductManagement.Data;
 using ProductManagement.Models;
+using ProductManagement.Services;
 
 namespace ProductManagement.Repositories
 {
@@ -69,7 +70,13 @@ namespace ProductManagement.Repositories
             _context.Products.Update(product);
              await _context.SaveChangesAsync();
         }
-        public async Task<IEnumerable<Product>> FilterProductsAsync(int? categoryId, decimal? minPrice, decimal? maxPrice, string? sortBy)
+        public async Task<PagedResult<Product>> FilterProductsAsync(
+    int? categoryId,
+    decimal? minPrice,
+    decimal? maxPrice,
+    string? sortBy,
+    int pageNumber = 1,
+    int pageSize = 10)
         {
             var query = _context.Products.Include(p => p.Category).AsQueryable();
 
@@ -99,7 +106,19 @@ namespace ProductManagement.Repositories
                 }
             }
 
-            return await query.ToListAsync();
+            var totalItems = await query.CountAsync();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<Product>
+            {
+                Items = items,
+                TotalCount = totalItems,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
         public async Task<IEnumerable<Product>> GetFeaturedProductsAsync()
         {

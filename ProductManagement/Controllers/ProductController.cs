@@ -147,10 +147,16 @@ namespace ProductManagement.Controllers
 
         // Lọc sản phẩm nâng cao
         [HttpGet("filter")]
-        public async Task<IActionResult> FilterProducts([FromQuery] int? categoryId, [FromQuery] decimal? minPrice, [FromQuery] decimal? maxPrice, [FromQuery] string? sortBy)
+        public async Task<IActionResult> FilterProducts(
+    int? categoryId,
+    decimal? minPrice,
+    decimal? maxPrice,
+    string? sortBy,
+    int pageNumber = 1,
+    int pageSize = 15)
         {
-            var products = await _productService.FilterProductsAsync(categoryId, minPrice, maxPrice, sortBy);
-            return Ok(products);
+            var result = await _productService.FilterProductsAsync(categoryId, minPrice, maxPrice, sortBy, pageNumber, pageSize);
+            return Ok(result);
         }
 
         // Lấy sản phẩm nổi bật

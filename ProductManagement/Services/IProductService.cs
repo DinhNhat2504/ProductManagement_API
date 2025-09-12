@@ -10,7 +10,7 @@ namespace ProductManagement.Services
         Task<bool> UpdateProductAsync(int productId, ProductDTO productDto);
         Task<bool> DeleteProductAsync(int productId);
         Task<IEnumerable<ProductDTO>> SearchProductsAsync(string searchTerm);
-        Task<IEnumerable<ProductDTO>> FilterProductsAsync(int? categoryId, decimal? minPrice, decimal? maxPrice, string? sortBy);
+        Task<PagedResult<ProductDTO>> FilterProductsAsync(int? categoryId, decimal? minPrice, decimal? maxPrice, string? sortBy, int pageNumber = 1, int pageSize = 10);
         Task<IEnumerable<ProductDTO>> GetFeaturedProductsAsync();
         Task<IEnumerable<ProductReviewDTO>> GetProductReviewsAsync(int productId);
         Task<IEnumerable<ProductDTO>> GetRelatedProductsAsync(int productId);

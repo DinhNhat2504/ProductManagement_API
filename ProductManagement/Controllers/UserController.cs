@@ -26,8 +26,10 @@ namespace ProductManagement.Controllers
             var user = await _userService.RegisterAsync(dto);
             if (user == null)
                 return BadRequest("Email đã tồn tại");
-
-            return Ok(user);
+            // Lấy user entity để tạo JWT
+            var userEntity = await _userService.GetEntityByEmailAsync(dto.Email);
+            var token = _jwtService.GenerateToken(userEntity!);
+            return Ok(new { token, user });
         }
 
         // Đăng nhập

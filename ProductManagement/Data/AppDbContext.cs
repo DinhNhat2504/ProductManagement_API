@@ -31,6 +31,8 @@ namespace ProductManagement.Data
         public DbSet<ChatMessage> Messages { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<WishlistItem> WishlistItems { get; set; }
+        public DbSet<Stock> Stocks { get; set; }
+        public DbSet<StockTransaction> StockTransactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
