@@ -27,16 +27,16 @@ namespace ProductManagement.Services
             return _mapper.Map<List<OrderDTO>>(orders);
         }
 
-        public async Task<OrderDTO?> GetOrderByIdAsync(int orderId)
+        public async Task<OrderDTO?> GetOrderByIdAsync(Guid orderId)
         {
             var order = await _orderRepository.GetOrderByIdAsync(orderId);
             return order == null ? null : _mapper.Map<OrderDTO>(order);
         }
 
-        public async Task<List<OrderDTO>> GetOrdersByUserIdAsync(int userId)
+        public async Task<List<OrderResponseDTO>> GetOrdersByUserIdAsync(int userId)
         {
             var orders = await _orderRepository.GetOrdersByUserIdAsync(userId);
-            return _mapper.Map<List<OrderDTO>>(orders);
+            return _mapper.Map<List<OrderResponseDTO>>(orders);
         }
 
         public async Task<OrderDTO> CreateOrderAsync(OrderCreateDTO orderDto)
@@ -58,13 +58,14 @@ namespace ProductManagement.Services
                     item.Price = 0;
                 }
             }
+            order.CreatedAt = DateTime.Now;
             order.TotalPrice = total;
 
             var createdOrder = await _orderRepository.CreateOrderAsync(order);
             return _mapper.Map<OrderDTO>(createdOrder);
         }
 
-        public async Task<OrderDTO?> UpdateOrderStatusAsync(int orderId, OrderUpdateDTO updateDto)
+        public async Task<OrderDTO?> UpdateOrderStatusAsync(Guid orderId, OrderUpdateDTO updateDto)
         {
             var order = await _orderRepository.GetOrderByIdAsync(orderId);
             if (order == null)
@@ -75,7 +76,7 @@ namespace ProductManagement.Services
             return _mapper.Map<OrderDTO>(updatedOrder);
         }
 
-        public async Task<bool> DeleteOrderAsync(int orderId)
+        public async Task<bool> DeleteOrderAsync(Guid orderId)
         {
             return await _orderRepository.DeleteOrderAsync(orderId);
         }

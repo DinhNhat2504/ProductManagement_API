@@ -48,7 +48,7 @@ public class User
     public ICollection<Order> Orders { get; set; } = new List<Order>();
     public ICollection<Blog> Blogs { get; set; } = new List<Blog>();
     public ICollection<ProductReview> ProductReviews { get; set; } = new List<ProductReview>();
-    public ICollection<Voucher> Vouchers { get; set; } = new List<Voucher>();
+    public ICollection<UserVoucher> UserVouchers { get; set; } = new List<UserVoucher>();
     public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     public ICollection<ChatRoom> ChatRoomsAsUser { get; set; } = new List<ChatRoom>(); 
     public ICollection<ChatRoom> ChatRoomsAsAdmin { get; set; } = new List<ChatRoom>(); 

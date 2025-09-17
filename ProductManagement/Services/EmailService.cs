@@ -1,0 +1,49 @@
+﻿using MailKit.Net.Smtp;
+using Microsoft.Extensions.Configuration;
+using MimeKit;
+using ProductManagement.DTOs;
+namespace ProductManagement.Services
+{
+    public class EmailService : IEmailService
+    {
+        private readonly IConfiguration _config;
+        public EmailService(IConfiguration config)
+        {
+            _config = config;
+        }
+
+        public async Task SendOrderConfirmationEmail(OrderDTO order, string confirmationLink)
+        {
+            var emailSettings = _config.GetSection("EmailSettings");
+            var email = new MimeMessage();
+            email.From.Add(MailboxAddress.Parse(emailSettings["SenderEmail"]));
+            email.To.Add(MailboxAddress.Parse(order.CustomerEmail));
+            email.Subject = $"Xác nhận đơn hàng #{order.OrderId}";
+
+            email.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+            {
+                Text = $@"
+                <h3>Cảm ơn bạn đã đặt hàng!</h3>
+                <p>Thông tin đơn hàng:</p>
+                <ul>
+                    <li>Tên khách hàng: {order.CustomerName}</li>
+                    <li>Email: {order.CustomerEmail}</li>
+                    <li>Số điện thoại: {order.CustomerPhone}</li>
+                    <li>Địa chỉ: {order.ShippingAddress}</li>
+                    <li>Tổng tiền: {order.TotalPrice:N0} VNĐ</li>
+                    <li>Ngày đặt hàng: {order.CreatedAt:dd/MM/yyyy}</li>
+                    
+                </ul>
+                <p>Vui lòng xác nhận đơn hàng bằng cách nhấn vào link sau:</p>
+                <a href='{confirmationLink}'>Xác nhận đơn hàng</a>
+            "
+            };
+
+            using var smtp = new SmtpClient();
+            await smtp.ConnectAsync(emailSettings["SmtpServer"], int.Parse(emailSettings["Port"]), MailKit.Security.SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync(emailSettings["SenderEmail"], emailSettings["Password"]);
+            await smtp.SendAsync(email);
+            await smtp.DisconnectAsync(true);
+        }
+    }
+}

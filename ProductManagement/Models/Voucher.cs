@@ -29,10 +29,6 @@ public class Voucher
     public int? MaxUsage { get; set; }
     public int CurrentUsage { get; set; }
 
-    [ForeignKey("User")]
-    public int? UserId { get; set; }
-
-    public User? User { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 

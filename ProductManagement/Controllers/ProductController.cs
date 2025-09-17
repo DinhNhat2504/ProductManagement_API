@@ -11,9 +11,12 @@ namespace ProductManagement.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
-        public ProductController(IProductService productService)
+
+        private readonly IGeminiService _geminiService;
+        public ProductController(IProductService productService, IGeminiService geminiService)
         {
             _productService = productService;
+            _geminiService = geminiService;
         }
 
         // Lấy tất cả sản phẩm  
@@ -23,7 +26,7 @@ namespace ProductManagement.Controllers
             var products = await _productService.GetAllProductsAsync();
             return Ok(products);
         }
-
+        
         // Lấy sản phẩm theo id
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(int id)

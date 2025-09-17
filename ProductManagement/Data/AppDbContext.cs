@@ -33,6 +33,7 @@ namespace ProductManagement.Data
         public DbSet<WishlistItem> WishlistItems { get; set; }
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<StockTransaction> StockTransactions { get; set; }
+        public DbSet<UserVoucher> UserVouchers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -51,6 +52,10 @@ namespace ProductManagement.Data
                 .WithMany(u => u.ChatRoomsAsAdmin)
                 .HasForeignKey(cr => cr.AdminId)
                 .OnDelete(DeleteBehavior.Restrict);
+            // Khóa chính tổng hợp
+            modelBuilder.Entity<UserVoucher>()
+        .HasKey(uv => new { uv.UserId, uv.VoucherId });
         }
+
     }
 }

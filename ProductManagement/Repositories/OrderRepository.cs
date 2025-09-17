@@ -24,7 +24,7 @@ namespace ProductManagement.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Order?> GetOrderByIdAsync(int orderId)
+        public async Task<Order?> GetOrderByIdAsync(Guid orderId)
         {
             return await _context.Orders
                 .Include(o => o.OrderStatus)
@@ -61,7 +61,7 @@ namespace ProductManagement.Repositories
             return order;
         }
 
-        public async Task<bool> DeleteOrderAsync(int orderId)
+        public async Task<bool> DeleteOrderAsync(Guid orderId)
         {
             var order = await _context.Orders.FindAsync(orderId);
             if (order == null)

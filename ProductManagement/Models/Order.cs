@@ -6,7 +6,8 @@ namespace ProductManagement.Models;
 public class Order
 {
     [Key]
-    public int OrderId { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public Guid OrderId { get; set; } = Guid.NewGuid();
 
     [ForeignKey("User")]
     public int? UserId { get; set; }

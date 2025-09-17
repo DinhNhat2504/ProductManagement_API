@@ -44,7 +44,10 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.PaymentName, opt => opt.MapFrom(src => src.Payment!.PaymentMethod))
             .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems));
         CreateMap<OrderItem, OrderItemDTO>();
-
+        CreateMap<Order, OrderResponseDTO>()
+            .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.OrderStatus != null ? src.OrderStatus.Name : null))
+            .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems))
+            .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.Payment!.PaymentMethod));
         CreateMap<OrderItem, OrderItemResponseDTO>()
             .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product!.Name));
         CreateMap<UserRegisterDTO, User>()

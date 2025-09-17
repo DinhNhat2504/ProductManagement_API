@@ -121,7 +121,7 @@ namespace ProductManagement.Controllers
             return Ok(user);
         }
         // Cập nhật thông tin user (yêu cầu JWT)
-        [Authorize]
+        
         [HttpPut("{id}")]   
         public async Task<IActionResult> UpdateUser(int id, [FromForm] UserDTO dto)
         {

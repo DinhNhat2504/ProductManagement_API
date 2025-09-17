@@ -11,9 +11,11 @@ namespace ProductManagement.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
-        public OrderController(IOrderService orderService)
+        private readonly IEmailService _emailService;
+        public OrderController(IOrderService orderService, IEmailService emailService)
         {
             _orderService = orderService;
+            _emailService = emailService;
         }
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
@@ -22,7 +24,7 @@ namespace ProductManagement.Controllers
             return Ok(orders);
         }
         [HttpGet("{orderId}")]
-        public async Task<IActionResult> GetOrderById(int orderId)
+        public async Task<IActionResult> GetOrderById(Guid orderId)
         {
             var order = await _orderService.GetOrderByIdAsync(orderId);
             if (order == null)
@@ -40,11 +42,32 @@ namespace ProductManagement.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
             var createdOrder = await _orderService.CreateOrderAsync(orderDto);
+
+            var confirmationLink = Url.Action(
+                nameof(ConfirmOrder),
+                "Order",
+                new { orderId = createdOrder.OrderId },
+                Request.Scheme
+            );
+
+            await _emailService.SendOrderConfirmationEmail(createdOrder, confirmationLink);
+
             return CreatedAtAction(nameof(GetOrderById), new { orderId = createdOrder.OrderId }, createdOrder);
         }
+        [HttpGet("confirm")]
+        public async Task<IActionResult> ConfirmOrder(Guid orderId)
+        {
+            var updateDto = new OrderUpdateDTO { OrderStatusId = 3 }; // Đã xác nhận
+            var updatedOrder = await _orderService.UpdateOrderStatusAsync(orderId, updateDto);
+            if (updatedOrder == null)
+                return NotFound("Không tìm thấy đơn hàng!");
+
+            return Redirect($"http://localhost:5173/order/confirm?orderId={orderId}&success=true");
+        }
         [HttpPut("{orderId}/status")]
-        public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] OrderUpdateDTO updateDto)
+        public async Task<IActionResult> UpdateOrderStatus(Guid orderId, [FromBody] OrderUpdateDTO updateDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -54,7 +77,7 @@ namespace ProductManagement.Controllers
             return Ok(updatedOrder);
         }
         [HttpDelete("{orderId}")]
-        public async Task<IActionResult> DeleteOrder(int orderId)
+        public async Task<IActionResult> DeleteOrder(Guid orderId)
         {
             var result = await _orderService.DeleteOrderAsync(orderId);
             if (!result)
