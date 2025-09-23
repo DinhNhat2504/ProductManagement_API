@@ -56,6 +56,17 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.RoleName , opt => opt.MapFrom(src => src.Role != null? src.Role.Name : null))
             .ReverseMap();
         CreateMap<StockTransactionDTO, StockTransaction>().ReverseMap();
+        CreateMap<Voucher, VoucherDTO>()
+            //.ForMember(dest => dest.UserVouchers, opt => opt.MapFrom(src => src.UserVouchers))
+            .ReverseMap();
+        CreateMap<UserVoucher, UserVoucherDTO>().ReverseMap();
+        CreateMap<ChatRoom, ChatRoomDTO>()
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? src.User.LastName : null))
+            .ForMember(dest => dest.AdminName, opt => opt.MapFrom(src => src.Admin != null ? src.Admin.LastName : null))
+            .ReverseMap();
+        CreateMap<ChatMessage, ChatMessageDTO>()
+            .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Sender != null ? src.Sender.LastName : null))
+            .ReverseMap();
     }
 }
 

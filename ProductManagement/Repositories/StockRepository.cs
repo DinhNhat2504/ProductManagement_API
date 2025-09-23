@@ -23,6 +23,7 @@ namespace ProductManagement.Repositories
                     ProductId = productId,
                     Quantity = quantity,
                     LastUpdated = DateTime.UtcNow
+
                 };
                 await _dbContext.Stocks.AddAsync(stock);
             }
@@ -37,6 +38,7 @@ namespace ProductManagement.Repositories
                 ProductId = productId,
                 QuantityChanged = quantity,
                 TransactionDate = DateTime.UtcNow,
+                IsImport = true,
                 Note = note
             });
 
@@ -57,7 +59,8 @@ namespace ProductManagement.Repositories
                 ProductId = productId,
                 QuantityChanged = -quantity,
                 TransactionDate = DateTime.UtcNow,
-                Note = note
+                Note = note,
+                IsImport = false,
             });
 
             await _dbContext.SaveChangesAsync();

@@ -16,5 +16,6 @@ namespace ProductManagement.Models
         [ForeignKey("Vouchers")]
         public int VoucherId { get; set; }
         public Voucher Voucher { get; set; }
+        public DateTime TimeOfUse { get; set; }
     }
 }

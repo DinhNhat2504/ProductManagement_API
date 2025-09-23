@@ -22,5 +22,6 @@ public class ChatMessage
     [Required]
     public string Content { get; set; } = string.Empty;
 
+    public bool IsRead { get; set; } = false;
     public DateTime SentAt { get; set; }
 }

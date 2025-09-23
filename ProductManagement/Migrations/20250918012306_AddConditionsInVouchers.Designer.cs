@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProductManagement.Data;
 
@@ -11,9 +12,11 @@ using ProductManagement.Data;
 namespace ProductManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250918012306_AddConditionsInVouchers")]
+    partial class AddConditionsInVouchers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -192,9 +195,6 @@ namespace ProductManagement.Migrations
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
 
                     b.Property<int>("SenderId")
                         .HasColumnType("int");
@@ -574,9 +574,6 @@ namespace ProductManagement.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
 
-                    b.Property<bool>("IsImport")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
@@ -658,9 +655,6 @@ namespace ProductManagement.Migrations
 
                     b.Property<int>("VoucherId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("TimeOfUse")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("UserId", "VoucherId");
 
@@ -884,7 +878,7 @@ namespace ProductManagement.Migrations
                         .HasForeignKey("UserId");
 
                     b.HasOne("ProductManagement.Models.Voucher", "Voucher")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("VoucherId");
 
                     b.Navigation("OrderStatus");
@@ -1078,6 +1072,11 @@ namespace ProductManagement.Migrations
                     b.Navigation("UserVouchers");
 
                     b.Navigation("Wishlists");
+                });
+
+            modelBuilder.Entity("ProductManagement.Models.Voucher", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("ProductManagement.Models.Wishlist", b =>

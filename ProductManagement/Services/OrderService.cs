@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using ProductManagement.DTOs;
 using ProductManagement.Models;
 using ProductManagement.Repositories;
@@ -11,14 +12,21 @@ namespace ProductManagement.Services
         private readonly ICartService _cartService;
         private readonly IMapper _mapper;
         private readonly IProductRepository _productRepository;
+        private readonly IVoucherRepository _voucherRepository;
+        private readonly IUserVoucherRepository _userVoucherRepository;
+        private readonly IStockRepository _stockRepository;
 
 
-        public OrderService(IOrderRepository orderRepository, ICartService cartService, IMapper mapper, IProductRepository productRepository)
+        public OrderService(IOrderRepository orderRepository, ICartService cartService, IMapper mapper, IProductRepository productRepository, IVoucherRepository voucherRepository, IUserVoucherRepository userVoucherRepository, IStockRepository stockRepository)
         {
             _orderRepository = orderRepository;
             _cartService = cartService;
             _mapper = mapper;
             _productRepository = productRepository;
+            _voucherRepository = voucherRepository;
+            _userVoucherRepository = userVoucherRepository;
+            _stockRepository = stockRepository;
+
         }
 
         public async Task<List<OrderDTO>> GetAllOrdersAsync()
@@ -42,25 +50,63 @@ namespace ProductManagement.Services
         public async Task<OrderDTO> CreateOrderAsync(OrderCreateDTO orderDto)
         {
             var order = _mapper.Map<Order>(orderDto);
-
-            decimal total = 0;
-            foreach (var item in order.OrderItems)
+            //decimal total = 0;
+            //foreach (var item in order.OrderItems)
+            //{
+            //    // Lấy giá sản phẩm từ DB
+            //    var product = await _productRepository.GetProductByIdAsync(item.ProductId);
+            //    if (product != null)
+            //    {
+            //        item.Price = product.Price;
+            //        total += item.Price * item.Quantity;
+            //    }
+            //    else
+            //    {
+            //        item.Price = 0;
+            //    } 
+            //}
+            foreach (var item in orderDto.OrderItems)
             {
-                // Lấy giá sản phẩm từ DB
-                var product = await _productRepository.GetProductByIdAsync(item.ProductId);
-                if (product != null)
-                {
-                    item.Price = product.Price;
-                    total += item.Price * item.Quantity;
-                }
-                else
-                {
-                    item.Price = 0;
-                }
+                var success = await _stockRepository.ExportStock( 
+                    item.ProductId,
+                    item.Quantity,
+                    $"Xuất kho khi tạo đơn hàng {order.OrderId}"
+                );
+                if (!success)
+                    throw new Exception($"Sản phẩm ID {item.ProductId} không đủ tồn kho.");
             }
             order.CreatedAt = DateTime.Now;
-            order.TotalPrice = total;
+            //order.TotalPrice = total;
+            // Kiểm tra và xử lý Voucher
+            // Nếu có chọn voucher
+            if (orderDto.VoucherId.HasValue)
+            {
+                // Nếu chưa đăng nhập thì không cho dùng voucher
+                if (!orderDto.UserId.HasValue)
+                    throw new Exception("Bạn phải đăng nhập để sử dụng voucher.");
 
+                // Lấy voucher từ DB
+                var voucher = await _voucherRepository.GetVoucherByIdAsync(orderDto.VoucherId.Value);
+                if (voucher == null)
+                    throw new Exception("Voucher không tồn tại.");
+
+                // Kiểm tra người dùng đã dùng voucher chưa
+                var userVoucher = await _userVoucherRepository.GetUserVoucherAsync(orderDto.UserId.Value, orderDto.VoucherId.Value);
+                if (userVoucher != null)
+                    throw new Exception("Người dùng đã sử dụng voucher này.");
+
+                // Tăng CurrentUsage
+                voucher.CurrentUsage += 1;
+                await _voucherRepository.UpdateVoucherAsync(voucher);
+
+                // Thêm bản ghi UserVoucher
+                var newUserVoucher = new UserVoucher
+                {
+                    UserId = orderDto.UserId.Value,
+                    VoucherId = orderDto.VoucherId.Value
+                };
+                await _userVoucherRepository.AddUserVoucherAsync(newUserVoucher);
+            }
             var createdOrder = await _orderRepository.CreateOrderAsync(order);
             return _mapper.Map<OrderDTO>(createdOrder);
         }

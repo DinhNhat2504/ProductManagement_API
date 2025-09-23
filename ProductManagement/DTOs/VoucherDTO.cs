@@ -1,0 +1,37 @@
+﻿using ProductManagement.Models;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ProductManagement.DTOs
+{
+    public class VoucherDTO
+    {
+        public int VoucherId { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string Code { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(20)]
+        public string DiscountType { get; set; } = string.Empty;
+
+        [Required]
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal DiscountValue { get; set; }
+
+        [Required]
+        public DateTime StartDate { get; set; }
+
+        [Required]
+        public DateTime EndDate { get; set; }
+
+        public int? MaxUsage { get; set; }
+        public int CurrentUsage { get; set; }
+        public int? Conditions { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        //public ICollection<UserVoucherDTO>? UserVouchers { get; set; } = new List<UserVoucherDTO>();
+    }
+}

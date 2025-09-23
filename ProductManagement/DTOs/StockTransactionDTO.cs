@@ -4,6 +4,7 @@
     {
         public int ProductId { get; set; }
         public int QuantityChanged { get; set; }
+        public bool IsImport { get; set; }
         public string? Note { get; set; }
     }
 }
