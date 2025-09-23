@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProductManagement.Models;
 
@@ -14,5 +14,5 @@ public class Category
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    
+    public ICollection<Brand> Brands { get; set; } = new List<Brand>();
 }

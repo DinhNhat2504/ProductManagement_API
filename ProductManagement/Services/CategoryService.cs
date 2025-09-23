@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using ProductManagement.Models;
 using ProductManagement.Repositories;
 
@@ -40,6 +40,11 @@ namespace ProductManagement.Services
         {
             var category = _categoryRepository.GetCategoryByIdAsync(id);
             return category;
+        }
+
+        public Task<IEnumerable<Brand>> GetBrandsByCategoryAsync(int categoryId)
+        {
+            return _categoryRepository.GetBrandsByCategoryAsync(categoryId);
         }
 
         public async Task<bool> UpdateCategoryAsync(Category category)

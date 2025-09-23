@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProductManagement.Models;
@@ -31,6 +31,11 @@ public class Product
     public int CategoryId { get; set; }
 
     public Category? Category { get; set; }
+
+    // Optional brand association
+    [ForeignKey("Brand")]
+    public int? BrandId { get; set; }
+    public Brand? Brand { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 

@@ -1,4 +1,4 @@
-﻿using ProductManagement.DTOs;
+using ProductManagement.DTOs;
 using System.Text.Json;
 
 namespace ProductManagement.Services
@@ -10,8 +10,8 @@ namespace ProductManagement.Services
 
         public GeminiService(IConfiguration configuration)
         {
-            _apiKey = configuration["GeminiSettings:ApiKey"];
-            _apiUrl = configuration["GeminiSettings:ApiUrl"];
+            _apiKey = configuration["GeminiSettings:ApiKey"] ?? throw new ArgumentException("GeminiSettings:ApiKey is not configured");
+            _apiUrl = configuration["GeminiSettings:ApiUrl"] ?? throw new ArgumentException("GeminiSettings:ApiUrl is not configured");
         }
 
         public async Task<string> GetResponseAsync(string prompt)
@@ -61,8 +61,10 @@ namespace ProductManagement.Services
 
             return await GetResponseAsync(prompt);
         }
-        public async Task<string> GetOrderAnswerAsync(OrderResponseDTO order, string userQuestion)
+        public async Task<string> GetOrderAnswerAsync(OrderResponseDTO? order, string userQuestion)
         {
+            if (order == null) return string.Empty;
+
             // Tạo prompt động dựa trên dữ liệu đơn hàng
             var prompt = $"Khách hàng hỏi: \"{userQuestion}\". Dưới đây là thông tin đơn hàng:\n" +
                          $"- Mã đơn hàng: {order.OrderId}\n" +

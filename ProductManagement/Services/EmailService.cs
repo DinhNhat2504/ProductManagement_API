@@ -1,4 +1,4 @@
-﻿using MailKit.Net.Smtp;
+using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using ProductManagement.DTOs;
@@ -40,8 +40,17 @@ namespace ProductManagement.Services
             };
 
             using var smtp = new SmtpClient();
-            await smtp.ConnectAsync(emailSettings["SmtpServer"], int.Parse(emailSettings["Port"]), MailKit.Security.SecureSocketOptions.StartTls);
-            await smtp.AuthenticateAsync(emailSettings["SenderEmail"], emailSettings["Password"]);
+            var portString = emailSettings["Port"];
+            if (!int.TryParse(portString, out var port))
+            {
+                throw new InvalidOperationException("EmailSettings:Port is not configured or not a valid integer.");
+            }
+
+            var senderEmail = emailSettings["SenderEmail"] ?? throw new InvalidOperationException("EmailSettings:SenderEmail is not configured.");
+            var password = emailSettings["Password"] ?? throw new InvalidOperationException("EmailSettings:Password is not configured.");
+
+            await smtp.ConnectAsync(emailSettings["SmtpServer"], port, MailKit.Security.SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync(senderEmail, password);
             await smtp.SendAsync(email);
             await smtp.DisconnectAsync(true);
         }

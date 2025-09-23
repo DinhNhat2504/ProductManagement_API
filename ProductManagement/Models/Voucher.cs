@@ -25,12 +25,13 @@ public class Voucher
 
     [Required]
     public DateTime EndDate { get; set; }
-
+     
     public int? MaxUsage { get; set; }
     public int CurrentUsage { get; set; }
+    public int? Conditions { get; set; } 
 
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    public ICollection<Order> Orders { get; set; } = new List<Order>();
+    //public ICollection<UserVoucher>? UserVouchers { get; set; } = new List<UserVoucher>();
 }

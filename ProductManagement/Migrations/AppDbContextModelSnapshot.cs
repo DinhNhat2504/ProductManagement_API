@@ -96,6 +96,39 @@ namespace ProductManagement.Migrations
                     b.ToTable("BlogCategories");
                 });
 
+            modelBuilder.Entity("ProductManagement.Models.Brand", b =>
+                {
+                    b.Property<int>("BrandId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BrandId"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImageURL")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("BrandId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Brands");
+                });
+
             modelBuilder.Entity("ProductManagement.Models.Cart", b =>
                 {
                     b.Property<int>("CartId")
@@ -192,6 +225,9 @@ namespace ProductManagement.Migrations
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
 
                     b.Property<int>("SenderId")
                         .HasColumnType("int");
@@ -446,6 +482,9 @@ namespace ProductManagement.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
+                    b.Property<int?>("BrandId")
+                        .HasColumnType("int");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
@@ -479,6 +518,8 @@ namespace ProductManagement.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("ProductId");
+
+                    b.HasIndex("BrandId");
 
                     b.HasIndex("CategoryId");
 
@@ -571,6 +612,9 @@ namespace ProductManagement.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
 
+                    b.Property<bool>("IsImport")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
@@ -653,6 +697,9 @@ namespace ProductManagement.Migrations
                     b.Property<int>("VoucherId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("TimeOfUse")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("UserId", "VoucherId");
 
                     b.HasIndex("VoucherId");
@@ -672,6 +719,9 @@ namespace ProductManagement.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("Conditions")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -776,6 +826,17 @@ namespace ProductManagement.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ProductManagement.Models.Brand", b =>
+                {
+                    b.HasOne("ProductManagement.Models.Category", "Category")
+                        .WithMany("Brands")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
             modelBuilder.Entity("ProductManagement.Models.Cart", b =>
                 {
                     b.HasOne("ProductManagement.Models.User", "User")
@@ -872,7 +933,7 @@ namespace ProductManagement.Migrations
                         .HasForeignKey("UserId");
 
                     b.HasOne("ProductManagement.Models.Voucher", "Voucher")
-                        .WithMany("Orders")
+                        .WithMany()
                         .HasForeignKey("VoucherId");
 
                     b.Navigation("OrderStatus");
@@ -905,11 +966,18 @@ namespace ProductManagement.Migrations
 
             modelBuilder.Entity("ProductManagement.Models.Product", b =>
                 {
+                    b.HasOne("ProductManagement.Models.Brand", "Brand")
+                        .WithMany("Products")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("ProductManagement.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Brand");
 
                     b.Navigation("Category");
                 });
@@ -1020,9 +1088,19 @@ namespace ProductManagement.Migrations
                     b.Navigation("Blogs");
                 });
 
+            modelBuilder.Entity("ProductManagement.Models.Brand", b =>
+                {
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("ProductManagement.Models.Cart", b =>
                 {
                     b.Navigation("CartItems");
+                });
+
+            modelBuilder.Entity("ProductManagement.Models.Category", b =>
+                {
+                    b.Navigation("Brands");
                 });
 
             modelBuilder.Entity("ProductManagement.Models.ChatRoom", b =>
@@ -1066,11 +1144,6 @@ namespace ProductManagement.Migrations
                     b.Navigation("UserVouchers");
 
                     b.Navigation("Wishlists");
-                });
-
-            modelBuilder.Entity("ProductManagement.Models.Voucher", b =>
-                {
-                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("ProductManagement.Models.Wishlist", b =>

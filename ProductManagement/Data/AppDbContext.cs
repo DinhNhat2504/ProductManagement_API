@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ProductManagement.Models;
 using System;
 using System.Data;
@@ -34,6 +34,7 @@ namespace ProductManagement.Data
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<StockTransaction> StockTransactions { get; set; }
         public DbSet<UserVoucher> UserVouchers { get; set; }
+        public DbSet<Brand> Brands { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -55,6 +56,20 @@ namespace ProductManagement.Data
             // Khóa chính tổng hợp
             modelBuilder.Entity<UserVoucher>()
         .HasKey(uv => new { uv.UserId, uv.VoucherId });
+
+            // Brand - Category relationship
+            modelBuilder.Entity<Brand>()
+                .HasOne(b => b.Category)
+                .WithMany(c => c.Brands)
+                .HasForeignKey(b => b.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Product - Brand relationship (optional)
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Brand)
+                .WithMany(b => b.Products)
+                .HasForeignKey(p => p.BrandId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
 
     }

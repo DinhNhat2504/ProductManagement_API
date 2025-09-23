@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProductManagement.DTOs;
 
@@ -25,6 +25,8 @@ public class ProductDTO
     [Required]
     public int CategoryId { get; set; }
     public string? CategoryName { get; set; }
+    public int? BrandId { get; set; }
+    public string? BrandName { get; set; }
 
 
 }

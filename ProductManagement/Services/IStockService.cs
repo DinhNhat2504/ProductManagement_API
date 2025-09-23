@@ -1,4 +1,4 @@
-﻿using ProductManagement.DTOs;
+using ProductManagement.DTOs;
 using ProductManagement.Models;
 
 namespace ProductManagement.Services
@@ -7,7 +7,7 @@ namespace ProductManagement.Services
     {
         Task ImportStockAsync(StockTransactionDTO dto);
         Task<bool> ExportStockAsync(StockTransactionDTO dto);
-        Task<IEnumerable<StockTransaction>> GetTransactionsAsync(int productId);
-        Task<Stock?> GetStockByProductIdAsync(int productId);
+        Task<IEnumerable<StockTransactionResponseDTO>> GetTransactionsAsync(int productId);
+        Task<StockResponseDTO?> GetStockByProductIdAsync(int productId);
     }
 }

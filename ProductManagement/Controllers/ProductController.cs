@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductManagement.DTOs;
@@ -136,7 +136,7 @@ namespace ProductManagement.Controllers
         [HttpGet("category/{categoryId}")]
         public async Task<IActionResult> GetProductByCategory(int categoryId)
         {
-            var products = await _productService.FilterProductsAsync(categoryId, null, null, null);
+            var products = await _productService.FilterProductsAsync(categoryId, null, null, null, null);
             return Ok(products);
         }
 
@@ -152,13 +152,14 @@ namespace ProductManagement.Controllers
         [HttpGet("filter")]
         public async Task<IActionResult> FilterProducts(
     int? categoryId,
+    int? brandId,
     decimal? minPrice,
     decimal? maxPrice,
     string? sortBy,
     int pageNumber = 1,
     int pageSize = 15)
         {
-            var result = await _productService.FilterProductsAsync(categoryId, minPrice, maxPrice, sortBy, pageNumber, pageSize);
+            var result = await _productService.FilterProductsAsync(categoryId, brandId, minPrice, maxPrice, sortBy, pageNumber, pageSize);
             return Ok(result);
         }
 

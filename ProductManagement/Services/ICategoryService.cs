@@ -1,4 +1,4 @@
-﻿using ProductManagement.Models;
+using ProductManagement.Models;
 
 namespace ProductManagement.Services
 {
@@ -6,6 +6,7 @@ namespace ProductManagement.Services
     {
         Task<IEnumerable<Category>> GetAllCategoriesAsync();
         Task<Category?> GetCategoryByIdAsync(int id);
+        Task<IEnumerable<Brand>> GetBrandsByCategoryAsync(int categoryId);
         Task<Category> CreateCategoryAsync(Category category);
         Task<bool> UpdateCategoryAsync(Category category);
         Task<bool> DeleteCategoryAsync(int id);

@@ -1,4 +1,4 @@
-﻿using ProductManagement.Models;
+using ProductManagement.Models;
 
 namespace ProductManagement.Repositories
 {

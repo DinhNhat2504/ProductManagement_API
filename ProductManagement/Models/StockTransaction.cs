@@ -15,6 +15,8 @@ public class StockTransaction
 
     [Required]
     public int QuantityChanged { get; set; } // + nhập, - xuất
+    [Required]
+    public bool IsImport { get; set; } // true: nhập, false: xuất
 
     public DateTime TransactionDate { get; set; }
     public string? Note { get; set; }

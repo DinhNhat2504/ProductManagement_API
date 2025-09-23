@@ -1,4 +1,4 @@
-﻿using ProductManagement.DTOs;
+using ProductManagement.DTOs;
 using ProductManagement.Models;
 using ProductManagement.Repositories;
 using AutoMapper;
@@ -73,13 +73,14 @@ namespace ProductManagement.Services
 
         public async Task<PagedResult<ProductDTO>> FilterProductsAsync(
      int? categoryId,
+     int? brandId,
      decimal? minPrice,
      decimal? maxPrice,
      string? sortBy,
      int pageNumber = 1,
      int pageSize = 10)
         {
-            var pagedProducts = await _productRepository.FilterProductsAsync(categoryId, minPrice, maxPrice, sortBy, pageNumber, pageSize);
+            var pagedProducts = await _productRepository.FilterProductsAsync(categoryId, brandId, minPrice, maxPrice, sortBy, pageNumber, pageSize);
             return new PagedResult<ProductDTO>
             {
                 Items = pagedProducts.Items.Select(p => _mapper.Map<ProductDTO>(p)),

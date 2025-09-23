@@ -1,4 +1,4 @@
-﻿using ProductManagement.DTOs;
+using ProductManagement.DTOs;
 
 namespace ProductManagement.Services
 {
@@ -10,7 +10,7 @@ namespace ProductManagement.Services
         Task<bool> UpdateProductAsync(int productId, ProductDTO productDto);
         Task<bool> DeleteProductAsync(int productId);
         Task<IEnumerable<ProductDTO>> SearchProductsAsync(string searchTerm);
-        Task<PagedResult<ProductDTO>> FilterProductsAsync(int? categoryId, decimal? minPrice, decimal? maxPrice, string? sortBy, int pageNumber = 1, int pageSize = 10);
+        Task<PagedResult<ProductDTO>> FilterProductsAsync(int? categoryId, int? brandId, decimal? minPrice, decimal? maxPrice, string? sortBy, int pageNumber = 1, int pageSize = 10);
         Task<IEnumerable<ProductDTO>> GetFeaturedProductsAsync();
         Task<IEnumerable<ProductReviewDTO>> GetProductReviewsAsync(int productId);
         Task<IEnumerable<ProductDTO>> GetRelatedProductsAsync(int productId);

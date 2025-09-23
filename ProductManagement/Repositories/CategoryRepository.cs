@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ProductManagement.Data;
 using ProductManagement.Models;
 
@@ -44,6 +44,15 @@ namespace ProductManagement.Repositories
         {
             _context.Categories.Update(category);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Brand>> GetBrandsByCategoryAsync(int categoryId)
+        {
+            return await _context.Brands
+                .Where(b => b.CategoryId == categoryId)
+                .OrderBy(b => b.Name)
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }

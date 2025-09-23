@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProductManagement.DTOs
 {
@@ -9,16 +9,16 @@ namespace ProductManagement.DTOs
 
         [Required(ErrorMessage = "Tên khách hàng không được để trống")]
         [StringLength(100)]
-        public string CustomerName { get; set; }
+        public string CustomerName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Email không được để trống")]
         [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         [StringLength(100)]
-        public string CustomerEmail { get; set; }
+        public string CustomerEmail { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Số điện thoại không được để trống")]
         [StringLength(20)]
-        public string CustomerPhone { get; set; }
+        public string CustomerPhone { get; set; } = string.Empty;
 
         public int? VoucherId { get; set; }
 
@@ -34,26 +34,26 @@ namespace ProductManagement.DTOs
 
         [Required(ErrorMessage = "Địa chỉ giao hàng không được để trống")]
         [StringLength(200)]
-        public string ShippingAddress { get; set; }
+        public string ShippingAddress { get; set; } = string.Empty;
 
         [Required]
         [StringLength(100)]
-        public string ShippingProvince { get; set; }
+        public string ShippingProvince { get; set; } = string.Empty;
 
         [Required]
         [StringLength(100)]
-        public string ShippingDistrict { get; set; }
+        public string ShippingDistrict { get; set; } = string.Empty;
 
         [Required]
         [StringLength(100)]
-        public string ShippingWard { get; set; }
+        public string ShippingWard { get; set; } = string.Empty;
 
-        public string OrderStatus { get; set; } = null!;
+        public string OrderStatus { get; set; } = string.Empty;
         public string? PaymentName { get; set; }
         public DateTime? CreatedAt { get; set; }
 
         [Required]
         [MinLength(1, ErrorMessage = "Đơn hàng phải có ít nhất 1 sản phẩm")]
-        public List<OrderItemDTO> OrderItems { get; set; }
+        public List<OrderItemDTO> OrderItems { get; set; } = new List<OrderItemDTO>();
     }
 }

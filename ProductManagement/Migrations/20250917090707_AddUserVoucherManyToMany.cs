@@ -29,7 +29,6 @@ namespace ProductManagement.Migrations
                 name: "FK_OrderItems_Orders_OrderId",
                 table: "OrderItems");
 
-            
 
             migrationBuilder.DropPrimaryKey(
                 name: "PK_Orders",

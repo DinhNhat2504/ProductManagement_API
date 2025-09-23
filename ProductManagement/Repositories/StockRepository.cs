@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ProductManagement.Data;
 using ProductManagement.Models;
 
@@ -23,6 +23,7 @@ namespace ProductManagement.Repositories
                     ProductId = productId,
                     Quantity = quantity,
                     LastUpdated = DateTime.UtcNow
+
                 };
                 await _dbContext.Stocks.AddAsync(stock);
             }
@@ -37,6 +38,7 @@ namespace ProductManagement.Repositories
                 ProductId = productId,
                 QuantityChanged = quantity,
                 TransactionDate = DateTime.UtcNow,
+                IsImport = true,
                 Note = note
             });
 
@@ -57,7 +59,8 @@ namespace ProductManagement.Repositories
                 ProductId = productId,
                 QuantityChanged = -quantity,
                 TransactionDate = DateTime.UtcNow,
-                Note = note
+                Note = note,
+                IsImport = false,
             });
 
             await _dbContext.SaveChangesAsync();
@@ -68,6 +71,7 @@ namespace ProductManagement.Repositories
         {
             return await _dbContext.Stocks
                 .Include(s => s.Product)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.ProductId == productId);
         }
 
@@ -76,6 +80,7 @@ namespace ProductManagement.Repositories
             return await _dbContext.StockTransactions
                 .Where(t => t.ProductId == productId)
                 .OrderByDescending(t => t.TransactionDate)
+                .AsNoTracking()
                 .ToListAsync();
         }
     }

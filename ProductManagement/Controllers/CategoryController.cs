@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductManagement.Models;
 using ProductManagement.Repositories;
@@ -13,6 +13,19 @@ namespace ProductManagement.Controllers
         private readonly ICategoryService _categoryService;
         public CategoryController(ICategoryService categoryService) {
             _categoryService = categoryService;
+        }
+        [HttpGet("{id}/brands")]
+        public async Task<IActionResult> GetBrandsByCategory(int id)
+        {
+            try
+            {
+                var brands = await _categoryService.GetBrandsByCategoryAsync(id);
+                return Ok(brands);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error: " + ex);
+            }
         }
         [HttpGet]
         public async Task<IActionResult> GetAllCategories()

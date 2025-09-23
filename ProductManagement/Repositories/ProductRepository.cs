@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ProductManagement.Data;
 using ProductManagement.Models;
 using ProductManagement.Services;
@@ -18,8 +18,6 @@ namespace ProductManagement.Repositories
 
         }
 
-        
-
         public async Task DeleteProductAsync(int productId)
         {
             var product = await _context.Products.FindAsync(productId);
@@ -31,21 +29,18 @@ namespace ProductManagement.Repositories
 
         }
 
-        public Task DeleteProductPriceAsync(int priceId)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IEnumerable<Product>> GetAllProductsAsync()
         {
             return await _context.Products
                 .Include(p => p.Category)
                 .Include(g => g.ProductReviews)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
         public async Task<Product?> GetProductByIdAsync(int productId)
         {
+            
             return await _context.Products.FindAsync(productId);
         }
 
@@ -53,7 +48,11 @@ namespace ProductManagement.Repositories
 
         public async Task<IEnumerable<Product>> GetProductsByCategoryAsync(int categoryId)
         {
-            return await _context.Products.Include(c => c.Category).Where(p => p.CategoryId == categoryId).ToListAsync();
+            return await _context.Products
+                .Include(c => c.Category)
+                .Where(p => p.CategoryId == categoryId)
+                .AsNoTracking()
+                .ToListAsync();
 
         }
 
@@ -62,6 +61,7 @@ namespace ProductManagement.Repositories
             return await _context.Products
                 .Include(p => p.Category)
                 .Where(p => p.Name!.Contains(searchTerm) || p.Description!.Contains(searchTerm))
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -72,6 +72,7 @@ namespace ProductManagement.Repositories
         }
         public async Task<PagedResult<Product>> FilterProductsAsync(
     int? categoryId,
+    int? brandId,
     decimal? minPrice,
     decimal? maxPrice,
     string? sortBy,
@@ -82,6 +83,8 @@ namespace ProductManagement.Repositories
 
             if (categoryId.HasValue)
                 query = query.Where(p => p.CategoryId == categoryId.Value);
+            if (brandId.HasValue)
+                query = query.Where(p => p.BrandId == brandId.Value);
             if (minPrice.HasValue)
                 query = query.Where(p => p.Price >= minPrice.Value);
             if (maxPrice.HasValue)
@@ -110,6 +113,7 @@ namespace ProductManagement.Repositories
             var items = await query
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
+                .AsNoTracking()
                 .ToListAsync();
 
             return new PagedResult<Product>
@@ -132,6 +136,7 @@ namespace ProductManagement.Repositories
             return await _context.Set<ProductReview>()
                 .Where(r => r.ProductId == productId)
                 .Include(r => r.User)
+                .AsNoTracking()
                 .ToListAsync();
         }
         public async Task<IEnumerable<Product>> GetRelatedProductsAsync(int productId)
@@ -142,6 +147,7 @@ namespace ProductManagement.Repositories
             return await _context.Products
                 .Where(p => p.CategoryId == product.CategoryId && p.ProductId != productId)
                 .Take(5)
+                .AsNoTracking()
                 .ToListAsync();
         }
     }

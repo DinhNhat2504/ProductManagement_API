@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ProductManagement.Data;
 using ProductManagement.Models;
 
@@ -21,6 +21,7 @@ namespace ProductManagement.Repositories
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
                 .OrderByDescending(o => o.OrderDate)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -31,6 +32,7 @@ namespace ProductManagement.Repositories
                 .Include(o => o.Payment)
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
         }
 
@@ -43,6 +45,7 @@ namespace ProductManagement.Repositories
                     .ThenInclude(oi => oi.Product)
                 .Where(o => o.UserId == userId)
                 .OrderByDescending(o => o.OrderDate)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -83,6 +86,7 @@ namespace ProductManagement.Repositories
                             o.OrderStatus!.Name.Contains(searchTerm) ||
                             o.Payment!.PaymentMethod!.Contains(searchTerm))
                 .OrderByDescending(o => o.OrderDate)
+                .AsNoTracking()
                 .ToListAsync();
         }
     }
