@@ -73,12 +73,12 @@ namespace ProductManagement.Controllers
 
                 var createdOrder = await _orderService.CreateOrderAsync(orderDto);
 
-                var confirmationLink = Url.Action(
-                    nameof(ConfirmOrder),
-                    "Order",
-                    new { orderId = createdOrder.OrderId },
-                    Request.Scheme
-                ) ?? string.Empty;
+            var confirmationLink = Url.Action(
+                nameof(ConfirmOrder),
+                "Order",
+                new { orderId = createdOrder.OrderId },
+                Request.Scheme
+            );
 
                 await _emailService.SendOrderConfirmationEmail(createdOrder, confirmationLink);
 

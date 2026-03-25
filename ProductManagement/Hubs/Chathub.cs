@@ -21,7 +21,7 @@ namespace ProductManagement.Hubs
 
             // Basic sanitization: remove script tags
             message = Regex.Replace(message, "<script.*?>.*?</script>", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
+            
             var dto = new ChatMessageDTO
             {
                 ChatRoomId = chatRoomId,
