@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ProductManagement.Data;
 using ProductManagement.DTOs;
 using System.Text.RegularExpressions;

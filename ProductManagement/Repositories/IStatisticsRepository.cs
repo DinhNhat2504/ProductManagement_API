@@ -1,4 +1,4 @@
-﻿using ProductManagement.DTOs;
+using ProductManagement.DTOs;
 
 namespace ProductManagement.Repositories
 {
